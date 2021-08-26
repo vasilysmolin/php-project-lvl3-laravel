@@ -1,0 +1,26 @@
+name: linter
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+
+jobs:
+  app-make-lint:
+    name: Linter code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Make install
+        run: make install
+
+      - name: phpcs
+        run: make lint
+
+      - name: Start tests
+        run: make test
