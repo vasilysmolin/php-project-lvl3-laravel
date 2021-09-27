@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 
 Route::get('/', [
-    'as' => 'main', function (Request $request): object {
+    'as' => 'main', function (): object {
     return view('welcome');
 }]);
 
@@ -43,3 +43,28 @@ Route::post('urls', [
 
     return redirect()->route('main');
 }]);
+
+Route::get('urls', [
+    'as' => 'urls.index', function (): object {
+    $urls = DB::table('urls')->paginate(25);
+    $lastedCheck = DB::table('urls_check')
+        ->distinct('url_id')
+        ->latest()
+        ->get()
+        ->keyBy('url_id');
+    return view('urls.index', compact('urls', 'lastedCheck'));
+}]);
+
+Route::get('urls/{id}', [
+    'as' => 'urls.show', function ($id): object {
+    $url = DB::table('urls')->find($id);
+    if(!$url) {
+        abort(404);
+    }
+
+    $checks = DB::table('urls_check')
+        ->where('url_id', $url->id)
+        ->get();
+    return view('urls.show', compact('url', 'checks'));
+}]);
+
