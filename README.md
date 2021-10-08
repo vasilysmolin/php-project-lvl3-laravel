@@ -30,5 +30,5 @@ SEO parameters of sites.
 
 ## Demo
 
-[Проект на Heroku](https://mighty-taiga-02578.herokuapp.com/)
+[project Heroku](https://mighty-taiga-02578.herokuapp.com/)
 
