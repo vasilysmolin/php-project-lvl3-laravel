@@ -1,7 +1,6 @@
 <?php
 
 use DiDom\Document;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 Route::get('/', [
     'as' => 'main', function (): object {
     return view('welcome');
+
 }]);
 
 Route::post('urls', [
@@ -85,8 +85,9 @@ Route::post('urls/{id}/checks', [
 
     $body = $response->getBody()->getContents();
     $document = new Document($body);
-    if($document->first('p')) {
-        $h1 = $document->first('p')->text();
+
+    if($document->first('h1')) {
+        $h1 = $document->first('h1')->text();
     }
 
     if($document->first('meta[name=keywords]')) {
