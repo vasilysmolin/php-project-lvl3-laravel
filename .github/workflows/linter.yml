@@ -42,7 +42,7 @@ jobs:
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         env:
           DB_CONNECTION: sqlite
-          DB_DATABASE: database/database.sq
+          DB_DATABASE: database/database.sqlite
         run: php artisan migrate
 
       - name: Start tests
