@@ -22,5 +22,8 @@ jobs:
       - name: phpcs
         run: make lint
 
+      - name: setup
+        run: make setup
+
       - name: Start tests
         run: make test
