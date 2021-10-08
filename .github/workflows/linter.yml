@@ -43,8 +43,6 @@ jobs:
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sq
-
-      - name: migrate
         run: php artisan migrate
 
       - name: Start tests
