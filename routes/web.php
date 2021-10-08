@@ -1,8 +1,11 @@
 <?php
 
+use DiDom\Document;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,6 +33,7 @@ Route::post('urls', [
 
     $url = DB::table('urls')->where('name', $host)->first();
     if (!is_null($url)) {
+        $id = $url->id;
         flash(__('Cтраница уже существует'));
     } else {
         $urlData = [
@@ -38,10 +42,12 @@ Route::post('urls', [
             'created_at' => Carbon::now()
         ];
         DB::table('urls')->insert($urlData);
+        $url = app('db')->table('urls')->latest()->first();
+        $id = $url->id;
         flash(__('Страница успешно добавлена'));
     }
 
-    return redirect()->route('main');
+    return redirect()->route('urls.show', $id);
 }]);
 
 Route::get('urls', [
@@ -66,5 +72,42 @@ Route::get('urls/{id}', [
         ->where('url_id', $url->id)
         ->get();
     return view('urls.show', compact('url', 'checks'));
+}]);
+
+Route::post('urls/{id}/checks', [
+    'as' => 'urls.checks.store', function ($id): object {
+    $url = app('db')->table('urls')->find($id);
+    if(!isset($url)){
+        abort($url, 404);
+    }
+
+    $response = HTTP::get($url->name);
+
+    $body = $response->getBody()->getContents();
+    $document = new Document($body);
+    if($document->first('p')) {
+        $h1 = $document->first('p')->text();
+    }
+
+    if($document->first('meta[name=keywords]')) {
+        $keywords = $document->first('meta[name=keywords]')->getAttribute('content');
+    }
+
+    if($document->first('meta[name=description]')) {
+        $description = $document->first('meta[name=description]')->getAttribute('content');
+    }
+
+    app('db')->table('urls_check')->insert([
+        'url_id' => $url->id,
+        'status_code' => $response->getStatusCode(),
+        'h1' => $h1 ?? null,
+        'keywords' => $keywords ?? null,
+        'description' => $description ?? null,
+        'updated_at' => Carbon::now(),
+        'created_at' => Carbon::now()
+    ]);
+    flash('Страница успешно проверена');
+
+    return redirect()->route('urls.show', $url->id);
 }]);
 
