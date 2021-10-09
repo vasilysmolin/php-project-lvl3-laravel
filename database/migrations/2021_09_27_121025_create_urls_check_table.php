@@ -13,7 +13,7 @@ class CreateUrlsCheckTable extends Migration
      */
     public function up()
     {
-        Schema::create('urls_check', function (Blueprint $table) {
+        Schema::create('url_checks', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('url_id')->unsigned();
             $table->integer('status_code')->nullable();
@@ -34,6 +34,6 @@ class CreateUrlsCheckTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('urls_check');
+        Schema::dropIfExists('url_checks');
     }
 }

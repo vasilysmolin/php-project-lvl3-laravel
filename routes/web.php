@@ -53,7 +53,7 @@ Route::post('urls', [
 Route::get('urls', [
     'as' => 'urls.index', function (): object {
     $urls = DB::table('urls')->paginate(25);
-    $lastedCheck = DB::table('urls_check')
+    $lastedCheck = DB::table('url_checks')
         ->distinct('url_id')
         ->latest()
         ->get()
@@ -68,7 +68,7 @@ Route::get('urls/{id}', [
         abort(404);
     }
 
-    $checks = DB::table('urls_check')
+    $checks = DB::table('url_checks')
         ->where('url_id', $url->id)
         ->get();
     return view('urls.show', compact('url', 'checks'));
@@ -98,7 +98,7 @@ Route::post('urls/{id}/checks', [
         $description = $document->first('meta[name=description]')->getAttribute('content');
     }
 
-    app('db')->table('urls_check')->insert([
+    app('db')->table('url_checks')->insert([
         'url_id' => $url->id,
         'status_code' => $response->getStatusCode(),
         'h1' => $h1 ?? null,

@@ -43,6 +43,6 @@ class UrlCheckTest extends TestCase
             'description' => 'laravel analyze',
             'h1' => 'laravel analyze'
         ];
-        $this->assertDatabaseHas('urls_check', $checkData);
+        $this->assertDatabaseHas('url_checks', $checkData);
     }
 }
