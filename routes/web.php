@@ -18,7 +18,7 @@ Route::get('/', [
 Route::post('urls', [
     'as' => 'urls.store', function (Request $request): object {
     $formData = $request->input('url');
-    $validator = Validator::make($request->input('url'), [
+    $validator = Validator::make($formData, [
         'name' => 'required|url|max:255|min:11',
     ]);
 
@@ -26,7 +26,7 @@ Route::post('urls', [
         flash(__('Некорректный URL'))->error();
         return redirect()->route('main')
             ->withErrors($validator)
-            ->withInput();
+            ->withInput($request->all);
     }
 
     $parsedUrl = parse_url($formData['name']);
