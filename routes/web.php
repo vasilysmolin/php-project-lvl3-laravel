@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Console\Input\Input;
 
 Route::get('/', [
     'as' => 'main', function (): object {
@@ -26,7 +27,7 @@ Route::post('urls', [
         return redirect()->route('main')
             ->withErrors($validator)
             ->withInput();
-    };
+    }
 
     $parsedUrl = parse_url($formData['name']);
     $host = mb_strtolower("{$parsedUrl['scheme']}://{$parsedUrl['host']}");
