@@ -17,8 +17,8 @@ Route::get('/', [
 Route::post('urls', [
     'as' => 'urls.store', function (Request $request): object {
     $formData = $request->input('url');
-    $validator = Validator::make($formData, [
-        'name' => 'required|url|max:255',
+    $validator = Validator::make($request->toArray(), [
+        'url.name' => 'required|url|max:255',
     ]);
 
     if ($validator->fails()) {
