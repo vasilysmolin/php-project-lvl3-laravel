@@ -10,105 +10,105 @@ use Illuminate\Support\Facades\Validator;
 
 Route::get('/', [
     'as' => 'main', function (): object {
-    return view('welcome');
+        return view('welcome');
 
-}]);
+    }]);
 
 Route::post('urls', [
     'as' => 'urls.store', function (Request $request): object {
-    $formData = $request->input('url');
-    $validator = Validator::make($request->toArray(), [
-        'url.name' => 'required|url|max:255',
-    ]);
+        $formData = $request->input('url');
+        $validator = Validator::make($request->toArray(), [
+            'url.name' => 'required|url|max:255',
+        ]);
 
-    if ($validator->fails()) {
-        flash(__('Некорректный URL'))->error();
-        return redirect()->route('main')
-            ->withErrors($validator)
-            ->withInput($request->all);
-    }
+        if ($validator->fails()) {
+            flash(__('Некорректный URL'))->error();
+            return redirect()->route('main')
+                ->withErrors($validator)
+                ->withInput($request->all);
+        }
 
-    $parsedUrl = parse_url($formData['name']);
-    $host = mb_strtolower("{$parsedUrl['scheme']}://{$parsedUrl['host']}");
+        $parsedUrl = parse_url($formData['name']);
+        $host = mb_strtolower("{$parsedUrl['scheme']}://{$parsedUrl['host']}");
 
-    $url = DB::table('urls')->where('name', $host)->first();
-    if (!is_null($url)) {
-        $id = $url->id;
-        flash(__('Cтраница уже существует'));
-    } else {
-        $urlData = [
-            'name' => $host,
-            'updated_at' => Carbon::now(),
-            'created_at' => Carbon::now()
-        ];
-        DB::table('urls')->insert($urlData);
-        $url = app('db')->table('urls')->latest()->first();
-        $id = $url->id;
-        flash(__('Страница успешно добавлена'));
-    }
+        $url = DB::table('urls')->where('name', $host)->first();
+        if (!is_null($url)) {
+            $id = $url->id;
+            flash(__('Cтраница уже существует'));
+        } else {
+            $urlData = [
+                'name' => $host,
+                'updated_at' => Carbon::now(),
+                'created_at' => Carbon::now()
+            ];
+            DB::table('urls')->insert($urlData);
+            $url = app('db')->table('urls')->latest()->first();
+            $id = $url->id;
+            flash(__('Страница успешно добавлена'));
+        }
 
-    return redirect()->route('urls.show', $id);
-}]);
+        return redirect()->route('urls.show', $id);
+    }]);
 
 Route::get('urls', [
     'as' => 'urls.index', function (): object {
-    $urls = DB::table('urls')->paginate(25);
-    $lastedCheck = DB::table('url_checks')
-        ->distinct('url_id')
-        ->latest()
-        ->get()
-        ->keyBy('url_id');
-    return view('urls.index', compact('urls', 'lastedCheck'));
-}]);
+        $urls = DB::table('urls')->paginate(25);
+        $lastedCheck = DB::table('url_checks')
+            ->distinct('url_id')
+            ->latest()
+            ->get()
+            ->keyBy('url_id');
+        return view('urls.index', compact('urls', 'lastedCheck'));
+    }]);
 
 Route::get('urls/{id}', [
     'as' => 'urls.show', function ($id): object {
-    $url = DB::table('urls')->find($id);
-    if(!$url) {
-        abort(404);
-    }
+        $url = DB::table('urls')->find($id);
+        if(!$url) {
+            abort(404);
+        }
 
-    $checks = DB::table('url_checks')
-        ->where('url_id', $url->id)
-        ->get();
-    return view('urls.show', compact('url', 'checks'));
-}]);
+        $checks = DB::table('url_checks')
+            ->where('url_id', $url->id)
+            ->get();
+        return view('urls.show', compact('url', 'checks'));
+    }]);
 
 Route::post('urls/{id}/checks', [
     'as' => 'urls.checks.store', function ($id): object {
-    $url = app('db')->table('urls')->find($id);
-    if(!isset($url)){
-        abort($url, 404);
-    }
+        $url = app('db')->table('urls')->find($id);
+        if(!isset($url)){
+            abort($url, 404);
+        }
 
-    $response = HTTP::get($url->name);
+        $response = HTTP::get($url->name);
 
-    $body = $response->getBody()->getContents();
-    $document = new Document($body);
+        $body = $response->getBody()->getContents();
+        $document = new Document($body);
 
-    if($document->first('h1')) {
-        $h1 = $document->first('h1')->text();
-    }
+        if($document->first('h1')) {
+            $h1 = $document->first('h1')->text();
+        }
 
-    if($document->first('meta[name=keywords]')) {
-        $keywords = $document->first('meta[name=keywords]')->getAttribute('content');
-    }
+        if($document->first('meta[name=keywords]')) {
+            $keywords = $document->first('meta[name=keywords]')->getAttribute('content');
+        }
 
-    if($document->first('meta[name=description]')) {
-        $description = $document->first('meta[name=description]')->getAttribute('content');
-    }
+        if($document->first('meta[name=description]')) {
+            $description = $document->first('meta[name=description]')->getAttribute('content');
+        }
 
-    app('db')->table('url_checks')->insert([
-        'url_id' => $url->id,
-        'status_code' => $response->getStatusCode(),
-        'h1' => $h1 ?? null,
-        'keywords' => $keywords ?? null,
-        'description' => $description ?? null,
-        'updated_at' => Carbon::now(),
-        'created_at' => Carbon::now()
-    ]);
-    flash('Страница успешно проверена');
+        app('db')->table('url_checks')->insert([
+            'url_id' => $url->id,
+            'status_code' => $response->getStatusCode(),
+            'h1' => $h1 ?? null,
+            'keywords' => $keywords ?? null,
+            'description' => $description ?? null,
+            'updated_at' => Carbon::now(),
+            'created_at' => Carbon::now()
+        ]);
+        flash('Страница успешно проверена');
 
-    return redirect()->route('urls.show', $url->id);
-}]);
+        return redirect()->route('urls.show', $url->id);
+    }]);
 
