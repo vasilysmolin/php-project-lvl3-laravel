@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
-use Symfony\Component\Console\Input\Input;
 
 Route::get('/', [
     'as' => 'main', function (): object {
@@ -19,7 +18,7 @@ Route::post('urls', [
     'as' => 'urls.store', function (Request $request): object {
     $formData = $request->input('url');
     $validator = Validator::make($formData, [
-        'name' => 'required|url|max:255|min:11',
+        'name' => 'required|url|max:255',
     ]);
 
     if ($validator->fails()) {

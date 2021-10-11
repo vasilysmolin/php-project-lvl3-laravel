@@ -3,9 +3,9 @@
 
 [![CI](https://github.com/vasilysmolin/php-project-lvl3/workflows/linter/badge.svg)](https://github.com/vasilysmolin/php-project-lvl3/actions)
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/a6a10a376bb6010ffca1/maintainability)](https://codeclimate.com/github/vasilysmolin/php-project-lvl23maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/b8b2e46d966ad5a5ac36/maintainability)](https://codeclimate.com/github/vasilysmolin/php-project-lvl3/maintainability)
 
-[![Test Coverage](https://api.codeclimate.com/v1/badges/a6a10a376bb6010ffca1/test_coverage)](https://codeclimate.com/github/vasilysmolin/php-project-lvl3/test_coverage)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/b8b2e46d966ad5a5ac36/test_coverage)](https://codeclimate.com/github/vasilysmolin/php-project-lvl3/test_coverage)
 
 # About Project
 
