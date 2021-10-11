@@ -6,13 +6,11 @@ use Tests\TestCase;
 
 class UrlTest extends TestCase
 {
-    protected $model;
 
     public function setUp(): void
     {
         parent::setUp();
         app('db')->table('urls')->insert(['name' => 'https://vk.com']);
-        $this->model = app('db')->table('urls')->latest()->first();
     }
 
     public function testIndex(): void
@@ -23,8 +21,9 @@ class UrlTest extends TestCase
 
     public function testShow(): void
     {
+        $model = app('db')->table('urls')->latest()->first();
         $response = $this->get(route('urls.show', [
-                'id' => $this->model->id
+                'id' => $model->id
             ]));
         $response->assertOk();
     }

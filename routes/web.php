@@ -29,7 +29,7 @@ Route::post('urls', [
 
         $parsedUrl = parse_url($formData['name']);
         $host = mb_strtolower("{$parsedUrl['scheme']}://{$parsedUrl['host']}");
-
+        $id = null;
         $url = DB::table('urls')->where('name', $host)->first();
         if (!is_null($url)) {
             $id = $url->id;
@@ -42,11 +42,17 @@ Route::post('urls', [
             ];
             DB::table('urls')->insert($urlData);
             $url = app('db')->table('urls')->latest()->first();
-            $id = $url->id;
+            if (!is_null($url)) {
+                $id = $url->id ;
+            }
+
             flash(__('Страница успешно добавлена'));
         }
-
-        return redirect()->route('urls.show', $id);
+        if (!is_null($id)) {
+            return redirect()->route('urls.show', $id);
+        } else {
+            return redirect()->route('main');
+        }
     }]);
 
 Route::get('urls', [
@@ -63,7 +69,7 @@ Route::get('urls', [
 Route::get('urls/{id}', [
     'as' => 'urls.show', function ($id): object {
         $url = DB::table('urls')->find($id);
-        if (!$url) {
+        if (!is_null($url)) {
             abort(404);
         }
 
@@ -75,8 +81,8 @@ Route::get('urls/{id}', [
 
 Route::post('urls/{id}/checks', [
     'as' => 'urls.checks.store', function ($id): object {
-        $url = app('db')->table('urls')->find($id);
-        if (!isset($url)) {
+        $url = app('db')->table('urls')->find((int) $id);
+        if (!is_null($url)) {
             abort($url, 404);
         }
 
@@ -85,15 +91,15 @@ Route::post('urls/{id}/checks', [
         $body = $response->getBody()->getContents();
         $document = new Document($body);
 
-        if ($document->first('h1')) {
+        if (!is_null($document->first('h1'))) {
             $h1 = $document->first('h1')->text();
         }
 
-        if ($document->first('meta[name=keywords]')) {
+        if (!is_null($document->first('meta[name=keywords]'))) {
             $keywords = $document->first('meta[name=keywords]')->getAttribute('content');
         }
 
-        if ($document->first('meta[name=description]')) {
+        if (!is_null($document->first('meta[name=description]'))) {
             $description = $document->first('meta[name=description]')->getAttribute('content');
         }
 
