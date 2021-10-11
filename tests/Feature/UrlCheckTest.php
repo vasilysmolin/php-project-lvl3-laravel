@@ -37,11 +37,11 @@ class UrlCheckTest extends TestCase
             '*' => Http::response($body, 200)
         ]);
         $model = app('db')->table('urls')->latest()->first();
-        $this->post(route('urls.checks.store', [$model->id]));
+        $this->post(route('urls.checks.store', [optional($model)->id]));
 
         $checkData = [
             'status_code' => '200',
-            'url_id' => $model->id,
+            'url_id' => optional($model)->id,
             'keywords' => 'laravel',
             'description' => 'laravel analyze',
             'h1' => 'laravel analyze'

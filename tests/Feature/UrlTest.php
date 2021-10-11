@@ -22,8 +22,9 @@ class UrlTest extends TestCase
     public function testShow(): void
     {
         $model = app('db')->table('urls')->latest()->first();
+
         $response = $this->get(route('urls.show', [
-                'id' => $model->id
+                'id' => optional($model)->id
             ]));
         $response->assertOk();
     }

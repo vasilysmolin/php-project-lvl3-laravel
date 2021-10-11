@@ -83,7 +83,7 @@ Route::post('urls/{id}/checks', [
     'as' => 'urls.checks.store', function ($id): object {
         $url = app('db')->table('urls')->find((int) $id);
         if (is_null($url)) {
-            abort($url, 404);
+            abort(404);
         }
 
         $response = HTTP::get($url->name);
@@ -91,9 +91,7 @@ Route::post('urls/{id}/checks', [
         $body = $response->getBody()->getContents();
         $document = new Document($body);
 
-        if (!is_null($document->first('h1'))) {
-            $h1 = $document->first('h1')->text();
-        }
+        $h1 = optional($document->first('h1'))->text();
 
         if (!is_null($document->first('meta[name=keywords]'))) {
             $keywords = $document->first('meta[name=keywords]')->getAttribute('content');
