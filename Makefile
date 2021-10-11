@@ -1,8 +1,8 @@
 lint:
-	composer exec phpcs app tests
+	composer exec phpcs app tests routes
 
 lint-fix:
-	composer exec phpcbf app tests
+	composer exec phpcbf app tests routes
 
 test:
 	php artisan test

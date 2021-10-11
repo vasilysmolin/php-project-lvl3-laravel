@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Validator;
 Route::get('/', [
     'as' => 'main', function (): object {
         return view('welcome');
-
     }]);
 
 Route::post('urls', [
@@ -64,7 +63,7 @@ Route::get('urls', [
 Route::get('urls/{id}', [
     'as' => 'urls.show', function ($id): object {
         $url = DB::table('urls')->find($id);
-        if(!$url) {
+        if (!$url) {
             abort(404);
         }
 
@@ -77,7 +76,7 @@ Route::get('urls/{id}', [
 Route::post('urls/{id}/checks', [
     'as' => 'urls.checks.store', function ($id): object {
         $url = app('db')->table('urls')->find($id);
-        if(!isset($url)){
+        if (!isset($url)) {
             abort($url, 404);
         }
 
@@ -86,15 +85,15 @@ Route::post('urls/{id}/checks', [
         $body = $response->getBody()->getContents();
         $document = new Document($body);
 
-        if($document->first('h1')) {
+        if ($document->first('h1')) {
             $h1 = $document->first('h1')->text();
         }
 
-        if($document->first('meta[name=keywords]')) {
+        if ($document->first('meta[name=keywords]')) {
             $keywords = $document->first('meta[name=keywords]')->getAttribute('content');
         }
 
-        if($document->first('meta[name=description]')) {
+        if ($document->first('meta[name=description]')) {
             $description = $document->first('meta[name=description]')->getAttribute('content');
         }
 
@@ -111,4 +110,3 @@ Route::post('urls/{id}/checks', [
 
         return redirect()->route('urls.show', $url->id);
     }]);
-
