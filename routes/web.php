@@ -68,8 +68,8 @@ Route::get('urls', [
 
 Route::get('urls/{id}', [
     'as' => 'urls.show', function ($id): object {
-        $url = DB::table('urls')->find($id);
-        if (!is_null($url)) {
+        $url = DB::table('urls')->find((int) $id);
+        if (is_null($url)) {
             abort(404);
         }
 
@@ -82,7 +82,7 @@ Route::get('urls/{id}', [
 Route::post('urls/{id}/checks', [
     'as' => 'urls.checks.store', function ($id): object {
         $url = app('db')->table('urls')->find((int) $id);
-        if (!is_null($url)) {
+        if (is_null($url)) {
             abort($url, 404);
         }
 

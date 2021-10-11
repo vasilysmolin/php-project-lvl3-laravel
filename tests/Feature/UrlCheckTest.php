@@ -19,15 +19,22 @@ class UrlCheckTest extends TestCase
         app('db')->table('urls')->insert($data);
         $this->fixture = __DIR__ . '/../Fixtures/index.html';
     }
+
     /**
-     * @group fail
+     * @throws \Exception
      */
     public function testStore(): void
     {
 
+        $body = file_get_contents($this->fixture);
+
+        if ($body === false) {
+            throw new \Exception('fixtures file not found');
+        }
+
         Http::fake([
             // Stub a JSON response for endpoints...
-            '*' => Http::response([], 200)
+            '*' => Http::response($body, 200)
         ]);
         $model = app('db')->table('urls')->latest()->first();
         $this->post(route('urls.checks.store', [$model->id]));
