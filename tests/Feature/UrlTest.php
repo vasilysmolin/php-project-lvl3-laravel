@@ -25,8 +25,7 @@ class UrlTest extends TestCase
     {
         $response = $this->get(route('urls.show', [
                 'id' => $this->model->id
-            ])
-        );
+            ]));
         $response->assertOk();
     }
 
