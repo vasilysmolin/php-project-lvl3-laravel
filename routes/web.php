@@ -62,6 +62,7 @@ Route::get('urls', [
         $urls = DB::table('urls')->paginate(25);
         $lastedCheck = DB::table('url_checks')
             ->distinct('url_id')
+            ->orderBy('url_id')
             ->latest()
             ->get()
             ->keyBy('url_id');

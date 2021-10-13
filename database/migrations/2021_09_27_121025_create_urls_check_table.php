@@ -21,7 +21,7 @@ class CreateUrlsCheckTable extends Migration
             $table->string('keywords')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
-//            $table->foreign('url_id')->references('id')->on('urls');
+            $table->foreign('url_id')->references('id')->on('urls');
         });
     }
 
