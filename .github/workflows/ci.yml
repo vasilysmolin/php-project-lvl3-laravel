@@ -69,8 +69,8 @@ jobs:
           POSTGRES_PORT: 5432
 
       - name: Run tests covarage
-        uses: paambaati/codeclimate-action@v2.2.4
+        uses: paambaati/codeclimate-action@v3.0.0
         env:
-          CC_TEST_REPORTER_ID: bc32a559ee6cffcb36f99ab566144554e35dcb439c70986e28c14ba002a113a0
+          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMAT }}
         with:
           coverageCommand: make test-coverage
