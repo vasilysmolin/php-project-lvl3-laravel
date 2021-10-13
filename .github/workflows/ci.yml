@@ -72,9 +72,9 @@ jobs:
         uses: paambaati/codeclimate-action@v3.0.0
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMAT }}
-        with:
-          coverageCommand: make test-coverage
           DB_HOST: localhost
           DB_PORT: 5432
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
+        with:
+          coverageCommand: make test-coverage
