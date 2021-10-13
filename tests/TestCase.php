@@ -10,5 +10,5 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
     use DatabaseTransactions;
-    use DatabaseMigrations;
+//    use DatabaseMigrations;
 }
