@@ -1,6 +1,8 @@
 <?php
 
 use DiDom\Document;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -86,31 +88,34 @@ Route::post('urls/{id}/checks', [
             abort(404);
         }
 
-        $response = HTTP::get($url->name);
+        try {
+            $response = HTTP::get($url->name);
 
-        $body = $response->getBody()->getContents();
-        $document = new Document($body);
+            $body = $response->getBody()->getContents();
+            $document = new Document($body);
 
-        $h1 = optional($document->first('h1'))->text();
+            $h1 = optional($document->first('h1'))->text();
 
-        if (!is_null($document->first('meta[name=keywords]'))) {
-            $keywords = $document->first('meta[name=keywords]')->getAttribute('content');
+            if (!is_null($document->first('meta[name=keywords]'))) {
+                $keywords = $document->first('meta[name=keywords]')->getAttribute('content');
+            }
+
+            if (!is_null($document->first('meta[name=description]'))) {
+                $description = $document->first('meta[name=description]')->getAttribute('content');
+            }
+
+            app('db')->table('url_checks')->insert([
+                'url_id' => $url->id,
+                'status_code' => $response->getStatusCode(),
+                'h1' => $h1 ?? null,
+                'keywords' => $keywords ?? null,
+                'description' => $description ?? null,
+                'updated_at' => Carbon::now(),
+                'created_at' => Carbon::now()
+            ]);
+            flash('Страница успешно проверена');
+        } catch (ConnectionException | RequestException $error) {
+            flash($error->getMessage())->error();
         }
-
-        if (!is_null($document->first('meta[name=description]'))) {
-            $description = $document->first('meta[name=description]')->getAttribute('content');
-        }
-
-        app('db')->table('url_checks')->insert([
-            'url_id' => $url->id,
-            'status_code' => $response->getStatusCode(),
-            'h1' => $h1 ?? null,
-            'keywords' => $keywords ?? null,
-            'description' => $description ?? null,
-            'updated_at' => Carbon::now(),
-            'created_at' => Carbon::now()
-        ]);
-        flash('Страница успешно проверена');
-
         return redirect()->route('urls.show', $url->id);
     }]);

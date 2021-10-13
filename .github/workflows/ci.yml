@@ -1,4 +1,4 @@
-name: linter
+name: ci
 
 on:
   push:
@@ -8,15 +8,15 @@ on:
       - '**'
 
 jobs:
-  app-make-lint:
-    name: Linter code
+  app-build:
+    name: Install ubuntu
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Make install
+      - name: install make utils
         run: make install
 
       - name: phpcs
@@ -39,11 +39,11 @@ jobs:
           mkdir -p database
           touch database/database.sqlite
 
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
+      - name: migrate database
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
         run: php artisan migrate
 
-      - name: Start tests
+      - name: start tests
         run: make test
