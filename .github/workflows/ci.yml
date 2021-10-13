@@ -67,3 +67,10 @@ jobs:
           POSTGRES_HOST: localhost
           # The default PostgreSQL port
           POSTGRES_PORT: 5432
+
+      - name: Run tests covarage
+        uses: paambaati/codeclimate-action@v2.2.4
+        env:
+          CC_TEST_REPORTER_ID: bc32a559ee6cffcb36f99ab566144554e35dcb439c70986e28c14ba002a113a0
+        with:
+          coverageCommand: make test-coverage

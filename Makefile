@@ -7,8 +7,9 @@ lint-fix:
 test:
 	php artisan test
 
+
 test-coverage:
-	php artisan test -- --coverage-clover tests/logs/clover.xml
+	php artisan test --coverage-clover storage/logs/test/coverage.xml --log-junit storage/logs/test/junit.xml
 
 start:
 	php artisan serve --host 0.0.0.0
