@@ -54,15 +54,14 @@ jobs:
           POSTGRES_HOST: localhost
 
 
-#      - name: Run tests covarage
-#        uses: paambaati/codeclimate-action@v3.0.0
-#        env:
-#          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMAT }}
-#          DB_HOST: localhost
-#          DB_PORT: 5432
-#          POSTGRES_HOST: localhost
-#          POSTGRES_PORT: 5432
-#        with:
-#          coverageCommand: make test-coverage
-#          coverageLocations: ${{ github.workplace }}/build/logs/clover.xml:clover
-#          debug: true
+      - name: Run tests covarage
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMAT }}
+          DB_HOST: localhost
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+        with:
+          coverageCommand: make test-coverage
+          coverageLocations: ${{ github.workplace }}/storage/logs/test/clover.xml
+          debug: true

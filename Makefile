@@ -9,7 +9,7 @@ test:
 
 
 test-coverage:
-	php artisan test --coverage-clover build/logs/clover.xml
+	XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-clover storage/logs/test/clover.xml
 
 start:
 	php artisan serve --host 0.0.0.0
