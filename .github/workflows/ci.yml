@@ -78,5 +78,5 @@ jobs:
           POSTGRES_PORT: 5432
         with:
           coverageCommand: make test-coverage
-          coverageLocations: ${{github.workplace}}/storage/logs/junit.xml:clover
+          coverageLocations: ${{ github.workplace }}/build/logs/clover.xml:clover
           debug: true
