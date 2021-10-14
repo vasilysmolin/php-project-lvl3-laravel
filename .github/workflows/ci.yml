@@ -21,9 +21,6 @@ jobs:
         # Provide the password for postgres
         env:
           POSTGRES_PASSWORD: password
-          DB_PASSWORD: password
-          DB_DATABASE: postgres
-          DB_USERNAME: postgres
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -44,14 +41,8 @@ jobs:
       - name: Setup project
         run: make setup
         env:
-          # The hostname used to communicate with the PostgreSQL service container
           DB_HOST: localhost
-          # The default PostgreSQL port
-          DB_PORT: 5432
-          # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: localhost
-          # The default PostgreSQL port
-          POSTGRES_PORT: 5432
 
       - name: Check lint
         run: make lint
@@ -59,14 +50,9 @@ jobs:
       - name: Run tests
         run: make test
         env:
-          # The hostname used to communicate with the PostgreSQL service container
           DB_HOST: localhost
-          # The default PostgreSQL port
-          DB_PORT: 5432
-          # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: localhost
-          # The default PostgreSQL port
-          POSTGRES_PORT: 5432
+
 
 #      - name: Run tests covarage
 #        uses: paambaati/codeclimate-action@v3.0.0
