@@ -23,20 +23,13 @@ class UrlTest extends TestCase
     public function testShow(): void
     {
         $url = app('db')->table('urls')->first();
-        if (!is_null($url)) {
-            $response = $this->get(route('urls.show', [
-                    'id' => $url->id
-                ]));
-            if (!is_null($response)) {
-                $body = $response->getContent();
-            }
-            if (!empty($body)) {
-                $document = new Document($body);
-            }
-            $h1 = optional($document->first('#url'))->text();
-
-            $this->assertEquals($h1, $url->name);
-        }
+        $response = $this->get(route('urls.show', [
+                'id' => $url->id
+            ]));
+        $body = optional($response)->getContent();
+        $document = new Document($body);
+        $h1 = optional($document->first('#url'))->text();
+        $this->assertEquals($h1, $url->name);
         $response->assertOk();
     }
 
