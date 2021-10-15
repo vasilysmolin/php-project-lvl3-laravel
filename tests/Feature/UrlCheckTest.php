@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 
 class UrlCheckTest extends TestCase
 {
-    protected string $fixture;
+    protected string $pathFixture;
 
     public function setUp(): void
     {
