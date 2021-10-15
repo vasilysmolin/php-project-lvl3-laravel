@@ -24,12 +24,12 @@ class UrlTest extends TestCase
     {
         $url = app('db')->table('urls')->first();
         $response = $this->get(route('urls.show', [
-                'id' => $url->id
+                'id' => $url->id ?? null
             ]));
         $body = optional($response)->getContent();
         $document = new Document($body);
         $h1 = optional($document->first('#url'))->text();
-        $this->assertEquals($h1, $url->name);
+        $this->assertEquals($h1, $url->name ?? null);
         $response->assertOk();
     }
 
