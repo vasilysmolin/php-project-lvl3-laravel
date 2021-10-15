@@ -17,7 +17,7 @@ class UrlCheckTest extends TestCase
             'name' => 'https://vk.com'
         ];
         app('db')->table('urls')->insert($data);
-        $this->fixture = __DIR__ . '/../Fixtures/index.html';
+        $this->pathFixture = __DIR__ . '/../Fixtures/index.html';
     }
 
     /**
@@ -26,7 +26,7 @@ class UrlCheckTest extends TestCase
     public function testStore(): void
     {
 
-        $body = file_get_contents($this->fixture);
+        $body = file_get_contents($this->pathFixture);
 
         if ($body === false) {
             throw new \Exception('fixtures file not found');
@@ -36,12 +36,14 @@ class UrlCheckTest extends TestCase
             // Stub a JSON response for endpoints...
             '*' => Http::response($body, 200)
         ]);
-        $model = app('db')->table('urls')->latest()->first();
-        $this->post(route('urls.checks.store', [optional($model)->id]));
+        $url = app('db')->table('urls')->first();
+        if (!is_null($url)) {
+            $this->post(route('urls.checks.store', [$url->id]));
+        }
 
         $checkData = [
             'status_code' => '200',
-            'url_id' => optional($model)->id,
+            'url_id' => optional($url)->id,
             'keywords' => 'laravel',
             'description' => 'laravel analyze',
             'h1' => 'laravel analyze'

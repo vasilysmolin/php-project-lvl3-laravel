@@ -11,7 +11,7 @@
                 </tr>
                 <tr>
                     <td>Имя</td>
-                    <td>{{ $url->name }}</td>
+                    <td id="url">{{ $url->name }}</td>
                 </tr>
                 <tr>
                     <td>Дата создания</td>

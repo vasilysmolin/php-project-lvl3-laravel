@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use DiDom\Document;
 use Tests\TestCase;
 
 class UrlTest extends TestCase
@@ -21,17 +22,21 @@ class UrlTest extends TestCase
 
     public function testShow(): void
     {
-        $model = app('db')->table('urls')->latest()->first();
+        $url = app('db')->table('urls')->first();
 
         $response = $this->get(route('urls.show', [
-                'id' => optional($model)->id
+                'id' => optional($url)->id
             ]));
+        $body = $response->getContent();
+        $document = new Document($body);
+        $h1 = optional($document->first('#url'))->text();
+        $this->assertEquals($h1, $url->name);
         $response->assertOk();
     }
 
     public function testStore(): void
     {
-        $data = ['name' => 'https://vk.com'];
+        $data = ['name' => 'https://ok.com'];
         $this->post(route('urls.store'), ['url' => $data]);
         $this->assertDatabaseHas('urls', $data);
     }

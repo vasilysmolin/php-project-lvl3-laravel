@@ -17,7 +17,6 @@ Route::get('/', [
 
 Route::post('urls', [
     'as' => 'urls.store', function (Request $request): object {
-        $formData = $request->input('url');
         $validator = Validator::make($request->toArray(), [
             'url.name' => 'required|url|max:255',
         ]);
@@ -29,16 +28,15 @@ Route::post('urls', [
                 ->withInput($request->all);
         }
 
-        $parsedUrl = parse_url($formData['name']);
-        $host = mb_strtolower("{$parsedUrl['scheme']}://{$parsedUrl['host']}");
+        $parsedUrl = parse_url($validator->valid()['url']['name']);
+        $normalizedUrl = mb_strtolower("{$parsedUrl['scheme']}://{$parsedUrl['host']}");
         $id = null;
-        $url = DB::table('urls')->where('name', $host)->first();
+        $url = DB::table('urls')->where('name', $normalizedUrl)->first();
         if (!is_null($url)) {
-            $id = $url->id;
             flash(__('Cтраница уже существует'));
         } else {
             $urlData = [
-                'name' => $host,
+                'name' => $normalizedUrl,
                 'updated_at' => Carbon::now(),
                 'created_at' => Carbon::now()
             ];
@@ -49,24 +47,22 @@ Route::post('urls', [
             }
 
             flash(__('Страница успешно добавлена'));
-        }
-        if (!is_null($id)) {
             return redirect()->route('urls.show', $id);
-        } else {
-            return redirect()->route('main');
         }
+
+        return redirect()->route('main');
     }]);
 
 Route::get('urls', [
     'as' => 'urls.index', function (): object {
         $urls = DB::table('urls')->paginate(25);
-        $lastedCheck = DB::table('url_checks')
+        $checks = DB::table('url_checks')
             ->distinct('url_id')
             ->orderBy('url_id')
             ->latest()
             ->get()
             ->keyBy('url_id');
-        return view('urls.index', compact('urls', 'lastedCheck'));
+        return view('urls.index', compact('urls', 'checks'));
     }]);
 
 Route::get('urls/{id}', [
