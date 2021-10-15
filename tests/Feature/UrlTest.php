@@ -29,8 +29,8 @@ class UrlTest extends TestCase
         $body = optional($response)->getContent();
         $document = new Document($body);
         $h1 = optional($document->first('#url'))->text();
-        $this->assertEquals($h1, $url->name ?? null);
         $response->assertOk();
+        $this->assertEquals($url->name ?? null, $h1);
     }
 
     public function testStore(): void
