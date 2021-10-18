@@ -2,24 +2,30 @@ includes:
     - ./vendor/nunomaduro/larastan/extension.neon
 
 parameters:
+  level: 8
+  paths:
+    - app
+    - database
+    - config
+    - resources
+    - routes
+    - tests
 
-    paths:
-        - app
-        - database
-        - config
-        - resources
-        - routes
-        - tests
+  checkMissingIterableValueType: false
 
-    # The level 8 is the highest level
-    level: 6
+  excludePaths:
+    - routes/console.php
+    - routes/channels.php
+    - database/factories
+    - app/Http/Middleware/Authenticate.php
+    - app/Http/Middleware/RedirectIfAuthenticated.php
+    - app/Exceptions/Handler.php
+    - app/Providers/RouteServiceProvider.php
 
-    excludePaths:
-        - app/Http/Controllers/Auth/*
+  reportUnmatchedIgnoredErrors: false
 
-    checkMissingIterableValueType: true
-    checkModelProperties: true
-    checkOctaneCompatibility: true
-
-    ignoreErrors:
-        - '#only\(\) invoked with 4 parameters, 1 required.#'
+  ignoreErrors:
+   - '#Call to an undefined method Illuminate\\Http\\Client\\Response::#'
+   - '#Call to an undefined method Illuminate\\Database\\Query\\Builder::#'
+   - '#Cannot access offset [\S]+ on array\(#'
+   - '#Parameter \#1 \$message of function flash expects string\|null, array\|string\|null given.#'

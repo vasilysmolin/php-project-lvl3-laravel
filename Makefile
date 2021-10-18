@@ -4,9 +4,11 @@ lint:
 lint-fix:
 	composer exec phpcbf app tests routes
 
+phpstan:
+	composer exec phpstan
+
 test:
 	php artisan test
-
 
 test-coverage:
 	XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-clover storage/logs/test/clover.xml
