@@ -7,11 +7,11 @@ use Tests\TestCase;
 
 class UrlTest extends TestCase
 {
-
+    public int $urlId;
     public function setUp(): void
     {
         parent::setUp();
-        app('db')->table('urls')->insert(['name' => 'https://vk.com']);
+        $this->urlId = app('db')->table('urls')->insertGetId(['name' => 'https://vk.com']);
     }
 
     public function testIndex(): void
@@ -22,9 +22,8 @@ class UrlTest extends TestCase
 
     public function testShow(): void
     {
-        $url = app('db')->table('urls')->first();
         $response = $this->get(route('urls.show', [
-                'id' => $url->id ?? null
+                'id' => $this->urlId
             ]));
 //        $body = optional($response)->getContent();
 //        $document = new Document($body);

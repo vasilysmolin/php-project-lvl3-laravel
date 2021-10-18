@@ -8,15 +8,13 @@ use Illuminate\Support\Facades\Http;
 class UrlCheckTest extends TestCase
 {
     protected string $pathFixture;
+    public int $urlId;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $data = [
-            'name' => 'https://vk.com'
-        ];
-        app('db')->table('urls')->insert($data);
+        $this->urlId = app('db')->table('urls')->insertGetId(['name' => 'https://vk.com']);
         $this->pathFixture = __DIR__ . '/../Fixtures/index.html';
     }
 
@@ -36,14 +34,12 @@ class UrlCheckTest extends TestCase
             // Stub a JSON response for endpoints...
             '*' => Http::response($body, 200)
         ]);
-        $url = app('db')->table('urls')->first();
-        if (!is_null($url)) {
-            $this->post(route('urls.checks.store', [$url->id]));
-        }
+
+        $this->post(route('urls.checks.store', [$this->urlId]));
 
         $checkData = [
             'status_code' => '200',
-            'url_id' => optional($url)->id,
+            'url_id' => $this->urlId,
             'keywords' => 'laravel',
             'description' => 'laravel analyze',
             'h1' => 'laravel analyze'

@@ -30,9 +30,10 @@ Route::post('urls', [
 
         $parsedUrl = parse_url($validator->valid()['url']['name']);
         $normalizedUrl = mb_strtolower("{$parsedUrl['scheme']}://{$parsedUrl['host']}");
-        $id = null;
+
         $url = DB::table('urls')->where('name', $normalizedUrl)->first();
         if (!is_null($url)) {
+            $id = $url->id;
             flash(__('Cтраница уже существует'));
         } else {
             $urlData = [
@@ -40,17 +41,12 @@ Route::post('urls', [
                 'updated_at' => Carbon::now(),
                 'created_at' => Carbon::now()
             ];
-            DB::table('urls')->insert($urlData);
-            $url = app('db')->table('urls')->latest()->first();
-            if (!is_null($url)) {
-                $id = $url->id ;
-            }
+            $id = DB::table('urls')->insertGetId($urlData);
 
             flash(__('Страница успешно добавлена'));
-            return redirect()->route('urls.show', $id);
         }
 
-        return redirect()->route('main');
+        return redirect()->route('urls.show', $id);
     }]);
 
 Route::get('urls', [
@@ -68,45 +64,33 @@ Route::get('urls', [
 Route::get('urls/{id}', [
     'as' => 'urls.show', function ($id): object {
         $url = DB::table('urls')->find((int) $id);
-        if (is_null($url)) {
-            abort(404);
-        }
+        abort_unless($url, 404);
 
         $checks = DB::table('url_checks')
             ->where('url_id', $url->id)
-            ->get();
+            ->paginate(25);
         return view('urls.show', compact('url', 'checks'));
     }]);
 
 Route::post('urls/{id}/checks', [
     'as' => 'urls.checks.store', function ($id): object {
         $url = app('db')->table('urls')->find((int) $id);
-        if (is_null($url)) {
-            abort(404);
-        }
+        abort_unless($url, 404);
 
         try {
             $response = HTTP::get($url->name);
-
             $body = $response->getBody()->getContents();
             $document = new Document($body);
-
             $h1 = optional($document->first('h1'))->text();
-
-            if (!is_null($document->first('meta[name=keywords]'))) {
-                $keywords = $document->first('meta[name=keywords]')->getAttribute('content');
-            }
-
-            if (!is_null($document->first('meta[name=description]'))) {
-                $description = $document->first('meta[name=description]')->getAttribute('content');
-            }
+            $keywords = optional($document->first('meta[name=keywords]'))->getAttribute('content');
+            $description = optional($document->first('meta[name=description]'))->getAttribute('content');
 
             app('db')->table('url_checks')->insert([
                 'url_id' => $url->id,
                 'status_code' => $response->getStatusCode(),
-                'h1' => $h1 ?? null,
-                'keywords' => $keywords ?? null,
-                'description' => $description ?? null,
+                'h1' => $h1,
+                'keywords' => $keywords,
+                'description' => $description,
                 'updated_at' => Carbon::now(),
                 'created_at' => Carbon::now()
             ]);
