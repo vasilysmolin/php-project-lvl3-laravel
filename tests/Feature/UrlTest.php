@@ -8,10 +8,12 @@ use Tests\TestCase;
 class UrlTest extends TestCase
 {
     public int $urlId;
+    public string $domain;
     public function setUp(): void
     {
         parent::setUp();
-        $this->urlId = app('db')->table('urls')->insertGetId(['name' => 'https://vk.com']);
+        $this->domain = 'https://vk.com';
+        $this->urlId = app('db')->table('urls')->insertGetId(['name' => $this->domain]);
     }
 
     public function testIndex(): void
@@ -25,12 +27,8 @@ class UrlTest extends TestCase
         $response = $this->get(route('urls.show', [
                 'id' => $this->urlId
             ]));
-//        $body = optional($response)->getContent();
-//        $document = new Document($body);
-//        $h1 = optional($document->first('#url'))->text();
+        $response->assertSee($this->domain);
         $response->assertOk();
-//        $this->assertTrue($url->name ?? null === $h1);
-//        $this->assertEquals($url->name ?? null, $h1);
     }
 
     public function testStore(): void
