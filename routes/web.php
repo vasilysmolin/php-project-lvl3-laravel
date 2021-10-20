@@ -68,13 +68,14 @@ Route::get('urls/{id}', [
 
         $checks = DB::table('url_checks')
             ->where('url_id', $url->id)
+            ->latest()
             ->paginate(25);
         return view('urls.show', compact('url', 'checks'));
     }]);
 
 Route::post('urls/{id}/checks', [
     'as' => 'urls.checks.store', function ($id): object {
-        $url = app('db')->table('urls')->find((int) $id);
+        $url = DB::table('urls')->find((int) $id);
         abort_unless($url, 404);
 
         try {
@@ -85,7 +86,7 @@ Route::post('urls/{id}/checks', [
             $keywords = optional($document->first('meta[name=keywords]'))->getAttribute('content');
             $description = optional($document->first('meta[name=description]'))->getAttribute('content');
 
-            app('db')->table('url_checks')->insert([
+            DB::table('url_checks')->insert([
                 'url_id' => $url->id,
                 'status_code' => $response->getStatusCode(),
                 'h1' => $h1,

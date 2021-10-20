@@ -2,18 +2,17 @@
 
 namespace Tests\Feature;
 
-use DiDom\Document;
 use Tests\TestCase;
 
 class UrlTest extends TestCase
 {
     public int $urlId;
-    public string $domain;
+    public string $url;
     public function setUp(): void
     {
         parent::setUp();
-        $this->domain = 'https://vk.com';
-        $this->urlId = app('db')->table('urls')->insertGetId(['name' => $this->domain]);
+        $this->url = 'https://vk.com';
+        $this->urlId = app('db')->table('urls')->insertGetId(['name' => $this->url]);
     }
 
     public function testIndex(): void
@@ -27,7 +26,7 @@ class UrlTest extends TestCase
         $response = $this->get(route('urls.show', [
                 'id' => $this->urlId
             ]));
-        $response->assertSee($this->domain);
+        $response->assertSee($this->url);
         $response->assertOk();
     }
 
